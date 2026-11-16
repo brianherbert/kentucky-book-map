@@ -1,0 +1,174 @@
+:root {
+  --paper: #efe4cd;
+  --paper-deep: #e4d6b8;
+  --land: #fbf5e4;
+  --ink: #2b2118;
+  --ink-soft: #6b5a48;
+  --rule: #cdbb99;
+  --accent: #a4372c;
+  --accent-deep: #7c261e;
+  --river: #6b93a8;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+[hidden] { display: none !important; }
+
+body {
+  background: var(--paper);
+  background-image: radial-gradient(ellipse at 50% 0%, #f6eedb 0%, var(--paper) 60%, var(--paper-deep) 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--serif);
+  line-height: 1.45;
+}
+
+.masthead { text-align: center; padding: 28px 16px 10px; }
+.eyebrow {
+  margin: 0; font-size: 12px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent);
+}
+.masthead h1 { margin: 4px 0 6px; font-size: clamp(30px, 5vw, 50px); font-weight: 600; letter-spacing: 0.01em; }
+.lede { margin: 0 auto; max-width: 46ch; font-style: italic; color: var(--ink-soft); }
+
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 20px;
+  max-width: 1500px; margin: 0 auto; padding: 14px 20px 20px; align-items: start;
+}
+
+/* ---------- map ---------- */
+.map-wrap {
+  position: relative; border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 4px;
+  background: #f4ead4; margin: 5px;
+}
+#map { display: block; width: 100%; height: auto; cursor: grab; touch-action: none; }
+#map:active { cursor: grabbing; }
+
+.halo { fill: none; stroke: #b9a57e; stroke-opacity: 0.28; stroke-linejoin: round; }
+.land { fill: var(--land); }
+.outline { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.counties { fill: none; stroke: #5a4630; stroke-opacity: 0.16; stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.river { fill: none; stroke: var(--river); stroke-width: 1.5; stroke-linecap: round; stroke-opacity: 0.85; vector-effect: non-scaling-stroke; }
+.river-label { fill: #4f7689; font-style: italic; font-size: 8.5px; letter-spacing: 0.08em; }
+
+.region { fill: #8a7355; fill-opacity: 0.5; font-size: 13px; letter-spacing: 0.42em; text-anchor: middle; text-transform: uppercase; pointer-events: none; }
+.neighbor { fill: #9c8a6c; fill-opacity: 0.75; font-size: 10px; letter-spacing: 0.5em; text-anchor: middle; text-transform: uppercase; pointer-events: none; }
+
+.town { pointer-events: none; }
+.town rect { fill: var(--ink); }
+.town text {
+  font-size: 11px; font-style: italic; fill: var(--ink);
+  paint-order: stroke; stroke: var(--land); stroke-width: 3px; stroke-linejoin: round;
+}
+.town.capital text { font-style: normal; font-variant: small-caps; letter-spacing: 0.06em; font-size: 12px; }
+.town.t1 text { font-size: 12.5px; font-weight: 600; }
+.town.t2 { opacity: 0; transition: opacity 0.25s; }
+.zoomed .town.t2 { opacity: 1; }
+
+.pin { stroke-width: 1.6; cursor: pointer; }
+.pin.exact { fill: var(--accent); stroke: #fff8ea; }
+.pin.approx { fill: #fff8ea; stroke: var(--accent); stroke-dasharray: 2.6 1.8; }
+.pin-hit { fill: transparent; cursor: pointer; }
+.pin-g:hover .pin, .pin-g:focus .pin { stroke-width: 2.6; }
+.pin-g:focus { outline: none; }
+.pin-g.selected .ring { stroke: var(--ink); }
+.ring { fill: none; stroke: transparent; stroke-width: 1.6; }
+
+.cluster { fill: var(--accent-deep); stroke: #fff8ea; stroke-width: 1.6; cursor: pointer; }
+.cluster-count { fill: #fff8ea; font: 600 11px/1 var(--serif); text-anchor: middle; pointer-events: none; }
+.cluster-g:hover .cluster, .cluster-g:focus .cluster { fill: var(--accent); }
+.cluster-g:focus { outline: none; }
+.spoke { stroke: var(--ink); stroke-opacity: 0.45; stroke-width: 1; }
+.hub { fill: var(--ink); }
+.fan-bg { fill: var(--land); fill-opacity: 0.82; stroke: var(--rule); }
+
+.compass { pointer-events: none; }
+.compass path { fill: var(--ink-soft); }
+.compass circle { fill: none; stroke: var(--ink-soft); stroke-width: 0.8; }
+.compass text { fill: var(--ink-soft); font-size: 11px; text-anchor: middle; letter-spacing: 0.1em; }
+
+.zoom-controls { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; }
+.zoom-controls button {
+  width: 32px; height: 32px; font: 18px/1 var(--serif); color: var(--ink);
+  background: var(--land); border: 1px solid var(--rule); border-radius: 3px; cursor: pointer;
+}
+.zoom-controls button:hover { background: #fff; }
+
+.legend {
+  position: absolute; left: 10px; bottom: 8px; margin: 0; padding: 6px 10px; list-style: none;
+  display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; color: var(--ink-soft);
+  background: rgba(251, 245, 228, 0.88); border: 1px solid var(--rule);
+}
+.legend li { display: flex; align-items: center; gap: 5px; }
+
+.tooltip {
+  position: absolute; pointer-events: none; z-index: 5; max-width: 240px; padding: 5px 9px;
+  background: var(--ink); color: #fbf5e4; font-size: 13px; border-radius: 3px; transform: translate(-50%, -135%);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ---------- panel ---------- */
+.panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+.card {
+  position: relative; display: grid; grid-template-columns: 104px 1fr; gap: 14px;
+  padding: 14px; background: var(--land); border: 1px solid var(--rule); box-shadow: 3px 3px 0 rgba(90, 70, 48, 0.12);
+}
+.card img { width: 104px; height: auto; display: block; border: 1px solid var(--rule); box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.18); }
+.card h3 { margin: 0 22px 2px 0; font-size: 19px; line-height: 1.2; }
+.card .by { margin: 0 0 8px; font-style: italic; color: var(--ink-soft); }
+.card .where { margin: 0 0 4px; font-size: 14.5px; }
+.card .approx-note { margin: 0 0 6px; font-size: 12.5px; color: var(--ink-soft); font-style: italic; }
+.card .meta { margin: 0 0 10px; font-size: 12.5px; color: var(--ink-soft); letter-spacing: 0.02em; }
+.card a.gr {
+  display: inline-block; padding: 5px 12px; font-size: 14px; text-decoration: none;
+  color: #fff8ea; background: var(--accent); border-radius: 2px;
+}
+.card a.gr:hover { background: var(--accent-deep); }
+.card .close {
+  position: absolute; top: 6px; right: 8px; border: 0; background: none; font: 22px/1 var(--serif);
+  color: var(--ink-soft); cursor: pointer; padding: 2px 6px;
+}
+
+.list-head { display: flex; flex-direction: column; gap: 6px; }
+.list-head h2 {
+  margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase;
+  border-bottom: 1px solid var(--rule); padding-bottom: 5px;
+}
+#filter {
+  width: 100%; padding: 7px 10px; font: 15px var(--serif); color: var(--ink);
+  background: var(--land); border: 1px solid var(--rule); border-radius: 2px;
+}
+
+.list { list-style: none; margin: 0; padding: 0; max-height: 62vh; overflow-y: auto; border: 1px solid var(--rule); background: rgba(251, 245, 228, 0.6); }
+.list li + li { border-top: 1px dotted var(--rule); }
+.list button {
+  display: grid; grid-template-columns: 26px 34px 1fr; gap: 9px; align-items: center; width: 100%;
+  padding: 7px 10px 7px 6px; text-align: left; font: inherit; color: inherit; background: none; border: 0; cursor: pointer;
+}
+.list button:hover { background: rgba(255, 255, 255, 0.6); }
+.list li.selected button { background: #fff; box-shadow: inset 3px 0 0 var(--accent); }
+.list .rank { text-align: right; font-size: 12.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.list img { width: 34px; height: 51px; object-fit: cover; border: 1px solid var(--rule); background: var(--paper-deep); }
+.list .t { display: block; font-size: 15px; line-height: 1.2; }
+.list .a { display: block; font-size: 12.5px; font-style: italic; color: var(--ink-soft); }
+.list .empty { padding: 14px; font-style: italic; color: var(--ink-soft); }
+
+.colophon { max-width: 70ch; margin: 0 auto; padding: 4px 20px 28px; text-align: center; font-size: 12.5px; font-style: italic; color: var(--ink-soft); }
+
+/* ---------- small screens ---------- */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; padding: 10px 12px 16px; }
+  .masthead { padding-top: 18px; }
+  .list { max-height: none; }
+  .legend { position: static; border-width: 1px 0 0; background: none; font-size: 12px; }
+  .region { font-size: 15px; }
+  .card {
+    position: fixed; left: 8px; right: 8px; bottom: 8px; z-index: 20; grid-template-columns: 78px 1fr;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  }
+  .card img { width: 78px; }
+  .card h3 { font-size: 17px; }
+}

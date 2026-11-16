@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kentucky Book Map</title>
+  <meta name="description" content="Browse a map of Kentucky to find books set in the places you know.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="masthead">
+    <p class="eyebrow">A reader's atlas</p>
+    <h1>Kentucky, by the Book</h1>
+    <p class="lede">One hundred books set in the Commonwealth, pinned where their stories take place.</p>
+  </header>
+
+  <main class="layout">
+    <section class="map-wrap" aria-label="Map of Kentucky">
+      <svg id="map" viewBox="0 0 1000 500" role="group" aria-label="Map of Kentucky with book settings"></svg>
+      <div class="zoom-controls">
+        <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+        <button type="button" id="zoom-out" aria-label="Zoom out">&minus;</button>
+        <button type="button" id="zoom-reset" aria-label="Reset view">&#8634;</button>
+      </div>
+      <ul class="legend">
+        <li><svg width="16" height="16"><circle cx="8" cy="8" r="5.5" class="pin exact"/></svg> Real place</li>
+        <li><svg width="16" height="16"><circle cx="8" cy="8" r="5.5" class="pin approx"/></svg> Fictional or approximate</li>
+        <li><svg width="22" height="22"><circle cx="11" cy="11" r="9.5" class="cluster"/><text x="11" y="14.5" class="cluster-count">3</text></svg> Several books</li>
+      </ul>
+      <div id="tooltip" class="tooltip" hidden></div>
+    </section>
+
+    <aside class="panel">
+      <article id="card" class="card" hidden aria-live="polite"></article>
+      <div class="list-head">
+        <h2>The books</h2>
+        <input id="filter" type="search" placeholder="Search title, author or place" aria-label="Search books">
+      </div>
+      <ol id="list" class="list"></ol>
+    </aside>
+  </main>
+
+  <footer class="colophon">
+    Ranked by number of Goodreads ratings. Hollow pins mark fictional towns and settings placed by region. Rivers are sketched, not surveyed.
+  </footer>
+
+  <script src="vendor/d3.min.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>
